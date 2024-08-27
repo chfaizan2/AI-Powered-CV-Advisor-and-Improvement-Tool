@@ -1,2 +1,15 @@
-# AI-Powered-CV-Advisor-and-Improvement-Tool
-This project is a web app that uses AI to help improve your CV (curriculum vitae) for job applications. It provides personalized feedback based on the job description you’re applying for, making it easier to tailor your CV and increase your chances of getting noticed by recruiters.
+import streamlit as st
+import pandas as pd
+from PyPDF2 import PdfReader
+import docx
+import google.generativeai as genai
+import os
+
+# Funcion to extract text from pdf
+def extract_text_from_pdf(pdf_file):
+    text = ""
+    reader = PdfReader(pdf_file)
+    for page in reader.pages:
+        text += page.extract_text() or ""
+    return text
+
