@@ -18,3 +18,8 @@ def extract_text_from_docx(docx_file):
     doc = docx.Document(docx_file)
     text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
     return text
+
+# Configure the Generative Ai key
+GOOGLE_API_KEY = "AIzaSyD7Rnl8Sbpbnoq4kKzVVf5of6MI89V_vts"
+genai.configure(api_key = GOOGLE_API_KEY )
+model = genai.GenerativeModel('gemini-1.5-flash')
