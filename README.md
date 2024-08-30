@@ -23,3 +23,12 @@ def extract_text_from_docx(docx_file):
 GOOGLE_API_KEY = "AIzaSyD7Rnl8Sbpbnoq4kKzVVf5of6MI89V_vts"
 genai.configure(api_key = GOOGLE_API_KEY )
 model = genai.GenerativeModel('gemini-1.5-flash')
+
+# Functtion to query the AI model
+def query_model(prompt):
+    response = model.generate_content(prompt)
+    # Extracting the generated text from the response
+    try:
+        return response.candidates[0].content
+    except (AttributeError, IndexError):
+        return "Unable to retrieve recommendations. Please try again."
