@@ -32,3 +32,18 @@ def query_model(prompt):
         return response.candidates[0].content
     except (AttributeError, IndexError):
         return "Unable to retrieve recommendations. Please try again."
+        
+# Streamlit web application
+st.title("CV Advisor")
+
+# File upload
+cv_file = st.file_uploader("Upload Your CV (PDF or DOCX)", type=['pdf', 'docx'])
+job_description = st.text_area("Enter Job Description")
+
+if st.button("Get Recommendation"):
+    if cv_file and job_description:
+        # Extract text from the CV
+        if cv_file.type == "application/pdf":
+            cv_text = extract_text_from_pdf(cv_file)
+        elif cv_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            cv_text = extract_text_from_docx(cv_file)
