@@ -47,3 +47,16 @@ if st.button("Get Recommendation"):
             cv_text = extract_text_from_pdf(cv_file)
         elif cv_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             cv_text = extract_text_from_docx(cv_file)
+
+# Create prompt for AI model
+        prompt = f"""
+        CV:
+        {cv_text}
+
+        Job Description:
+        {job_description}
+
+        I will provide my CV and a job description. As an expert, please analyze my CV against the job description
+        and tell me if it aligns well with the job requirements or not.
+        Additionally, please suggest what can be added or removed from my CV, and recommend any improvements.
+        """
