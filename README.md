@@ -60,3 +60,13 @@ if st.button("Get Recommendation"):
         and tell me if it aligns well with the job requirements or not.
         Additionally, please suggest what can be added or removed from my CV, and recommend any improvements.
         """
+        # Get recommendation from AI Model
+        try:
+            recommendations = query_model(prompt)
+            # Display Recommendations
+            st.subheader("Recommendations")
+            st.write(recommendations)
+        except Exception as e:
+            st.error(f"An error occurred while fetching recommendations: {e}")
+    else:
+        st.error("Please upload a CV and enter a job description.")
