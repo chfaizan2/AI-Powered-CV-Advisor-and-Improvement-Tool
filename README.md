@@ -5,7 +5,7 @@ import docx
 import google.generativeai as genai
 import os
 
-# Funcion to extract text from pdf
+# Function to extract text from pdf
 def extract_text_from_pdf(pdf_file):
     text = ""
     reader = PdfReader(pdf_file)
@@ -16,15 +16,15 @@ def extract_text_from_pdf(pdf_file):
 # Function to extract text from docx
 def extract_text_from_docx(docx_file):
     doc = docx.Document(docx_file)
-    text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+    text = "\n".join([paragraph.text for paragraph in doc.paragraphs])  
     return text
 
-# Configure the Generative Ai key
+# Configure the Generative AI key
 GOOGLE_API_KEY = "AIzaSyD7Rnl8Sbpbnoq4kKzVVf5of6MI89V_vts"
-genai.configure(api_key = GOOGLE_API_KEY )
+genai.configure(api_key=GOOGLE_API_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Functtion to query the AI model
+# Function to query the AI model
 def query_model(prompt):
     response = model.generate_content(prompt)
     # Extracting the generated text from the response
@@ -32,7 +32,7 @@ def query_model(prompt):
         return response.candidates[0].content
     except (AttributeError, IndexError):
         return "Unable to retrieve recommendations. Please try again."
-        
+
 # Streamlit web application
 st.title("CV Advisor")
 
@@ -48,7 +48,7 @@ if st.button("Get Recommendation"):
         elif cv_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
             cv_text = extract_text_from_docx(cv_file)
 
-# Create prompt for AI model
+        # Create prompt for AI model
         prompt = f"""
         CV:
         {cv_text}
@@ -60,12 +60,20 @@ if st.button("Get Recommendation"):
         and tell me if it aligns well with the job requirements or not.
         Additionally, please suggest what can be added or removed from my CV, and recommend any improvements.
         """
+
         # Get recommendation from AI Model
         try:
             recommendations = query_model(prompt)
+            # Split recommendations into bullet points
+            recommendations_list = recommendations.split('\n')
+            formatted_recommendations = ""
+            for recommendation in recommendations_list:
+                if recommendation.strip():
+                    formatted_recommendations += f"- {recommendation.strip()}\n"
+
             # Display Recommendations
             st.subheader("Recommendations")
-            st.write(recommendations)
+            st.write(formatted_recommendations)
         except Exception as e:
             st.error(f"An error occurred while fetching recommendations: {e}")
     else:
