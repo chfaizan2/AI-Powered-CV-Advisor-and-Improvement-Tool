@@ -27,11 +27,10 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 # Function to query the AI model
 def query_model(prompt):
     response = model.generate_content(prompt)
-    # Extracting the generated text from the response
-    try:
-        return response.candidates[0].content
-    except (AttributeError, IndexError):
-        return "Unable to retrieve recommendations. Please try again."
+    # Print the type and content of the response for debugging
+    st.write("Response type:", type(response))
+    st.write("Full response:", response)
+    return response
 
 # Streamlit web application
 st.title("CV Advisor")
@@ -63,17 +62,28 @@ if st.button("Get Recommendation"):
 
         # Get recommendation from AI Model
         try:
-            recommendations = query_model(prompt)
-            # Split recommendations into bullet points
-            recommendations_list = recommendations.split('\n')
-            formatted_recommendations = ""
-            for recommendation in recommendations_list:
-                if recommendation.strip():
-                    formatted_recommendations += f"- {recommendation.strip()}\n"
+            response = query_model(prompt)
+            # Check for different response structures
+            if hasattr(response, 'candidates') and len(response.candidates) > 0:
+                recommendations = response.candidates[0].content
+            elif isinstance(response, dict) and 'content' in response:
+                recommendations = response['content']
+            else:
+                recommendations = str(response)  # Fallback to string conversion
 
-            # Display Recommendations
-            st.subheader("Recommendations")
-            st.write(formatted_recommendations)
+            # Ensure recommendations is a string and split it into bullet points
+            if isinstance(recommendations, str):
+                recommendations_list = recommendations.split('\n')
+                formatted_recommendations = ""
+                for recommendation in recommendations_list:
+                    if recommendation.strip():
+                        formatted_recommendations += f"- {recommendation.strip()}\n"
+
+                # Display Recommendations
+                st.subheader("Recommendations")
+                st.write(formatted_recommendations)
+            else:
+                st.error("Recommendations are not in the expected string format.")
         except Exception as e:
             st.error(f"An error occurred while fetching recommendations: {e}")
     else:
