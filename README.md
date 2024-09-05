@@ -63,11 +63,13 @@ if st.button("Get Recommendation"):
         # Get recommendation from AI Model
         try:
             response = query_model(prompt)
-            # Check for different response structures
+            # Extract recommendations from the response
             if hasattr(response, 'candidates') and len(response.candidates) > 0:
-                recommendations = response.candidates[0].content
-            elif isinstance(response, dict) and 'content' in response:
-                recommendations = response['content']
+                content = response.candidates[0].content
+                if isinstance(content, dict) and 'parts' in content and len(content['parts']) > 0:
+                    recommendations = content['parts'][0]['text']
+                else:
+                    recommendations = str(content)  # Fallback to string conversion
             else:
                 recommendations = str(response)  # Fallback to string conversion
 
