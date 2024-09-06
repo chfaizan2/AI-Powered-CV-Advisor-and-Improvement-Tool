@@ -16,7 +16,7 @@ def extract_text_from_pdf(pdf_file):
 # Function to extract text from docx
 def extract_text_from_docx(docx_file):
     doc = docx.Document(docx_file)
-    text = "\n".join([paragraph.text for paragraph in doc.paragraphs])  
+    text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
     return text
 
 # Configure the Generative AI key
@@ -27,10 +27,11 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 # Function to query the AI model
 def query_model(prompt):
     response = model.generate_content(prompt)
-    # Print the type and content of the response for debugging
-    st.write("Response type:", type(response))
-    st.write("Full response:", response)
-    return response
+    # Extracting the generated text from the response
+    try:
+        return response.candidates[0].content
+    except (AttributeError, IndexError):
+        return "Unable to retrieve recommendations. Please try again."
 
 # Streamlit web application
 st.title("CV Advisor")
@@ -62,30 +63,14 @@ if st.button("Get Recommendation"):
 
         # Get recommendation from AI Model
         try:
-            response = query_model(prompt)
-            # Extract recommendations from the response
-            if hasattr(response, 'candidates') and len(response.candidates) > 0:
-                content = response.candidates[0].content
-                if isinstance(content, dict) and 'parts' in content and len(content['parts']) > 0:
-                    recommendations = content['parts'][0]['text']
-                else:
-                    recommendations = str(content)  # Fallback to string conversion
-            else:
-                recommendations = str(response)  # Fallback to string conversion
-
-            # Ensure recommendations is a string and split it into bullet points
-            if isinstance(recommendations, str):
-                recommendations_list = recommendations.split('\n')
-                formatted_recommendations = ""
-                for recommendation in recommendations_list:
-                    if recommendation.strip():
-                        formatted_recommendations += f"- {recommendation.strip()}\n"
-
-                # Display Recommendations
-                st.subheader("Recommendations")
-                st.write(formatted_recommendations)
-            else:
-                st.error("Recommendations are not in the expected string format.")
+            recommendations = query_model(prompt)
+            
+            # Display Recommendations in Markdown
+            st.subheader("Recommendations")
+            for line in recommendations.split("\n"):
+                if line.strip():  # Avoid displaying empty lines
+                    st.markdown(f"- {line.strip()}")  # Display each line as a bullet point
+                
         except Exception as e:
             st.error(f"An error occurred while fetching recommendations: {e}")
     else:
