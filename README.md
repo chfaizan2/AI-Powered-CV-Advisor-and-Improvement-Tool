@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 from PyPDF2 import PdfReader
 import docx
 import google.generativeai as genai
@@ -22,14 +21,12 @@ def extract_text_from_docx(docx_file):
 # Configure the Generative AI key
 GOOGLE_API_KEY = "AIzaSyD7Rnl8Sbpbnoq4kKzVVf5of6MI89V_vts"
 genai.configure(api_key=GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
 
 # Function to query the AI model
 def query_model(prompt):
-    response = model.generate_content(prompt)
-    # Extracting the generated text from the response
     try:
-        return response.candidates[0].content
+        response = genai.generate_text(model="gemini-1.5-flash", prompt=prompt)
+        return response.generations[0].text
     except (AttributeError, IndexError):
         return "Unable to retrieve recommendations. Please try again."
 
@@ -56,9 +53,8 @@ if st.button("Get Recommendation"):
         Job Description:
         {job_description}
 
-        I will provide my CV and a job description. As an expert, please analyze my CV against the job description
-        and tell me if it aligns well with the job requirements or not.
-        Additionally, please suggest what can be added or removed from my CV, and recommend any improvements.
+        Please analyze my CV against the job description for an AI and ML engineer.
+        Provide feedback on alignment and suggest improvements or changes to enhance my CV.
         """
 
         # Get recommendation from AI Model
