@@ -25,7 +25,8 @@ genai.configure(api_key=GOOGLE_API_KEY)
 # Function to query the AI model
 def query_model(prompt):
     try:
-        response = genai.generate_text(model="gemini-1.5-flash", prompt=prompt)
+        # Use a known model like text-bison-001
+        response = genai.generate_text(model="models/text-bison-001", prompt=prompt)
         return response.generations[0].text
     except (AttributeError, IndexError):
         return "Unable to retrieve recommendations. Please try again."
