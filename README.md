@@ -28,12 +28,12 @@ def query_model(prompt):
         # Use a known model like text-bison-001
         response = genai.generate_text(model="models/text-bison-001", prompt=prompt)
         
-        # Debugging: Print the entire response
-        st.write("API Response:", response)
-        
-        # Return the generated text
-        return response.generations[0].text
-    except (AttributeError, IndexError) as e:
+        # Accessing the content from the candidates list
+        if response and response.candidates:
+            return response.candidates[0]['output']
+        else:
+            return "No recommendations were generated."
+    except Exception as e:
         # Debugging: Print error details
         st.write("Error details:", e)
         return "Unable to retrieve recommendations. Please try again."
