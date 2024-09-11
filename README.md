@@ -61,8 +61,9 @@ if st.button("Get Recommendation"):
         Job Description:
         {job_description}
 
-        Please analyze my CV against the job description for an AI and ML engineer.
+        Please analyze my CV against the job description for any field in the world.
         Provide feedback on alignment and suggest improvements or changes to enhance my CV.
+        Please provide results in bullet form.
         """
 
         # Get recommendation from AI Model
